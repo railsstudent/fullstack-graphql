@@ -23,6 +23,18 @@ const createPetModel = db => {
         .write()
 
       return newPet
+    },
+
+    delete(id) {      
+      const pet = db.get('pet')
+        .find({ id })
+        .value()
+
+      db.get('pet')
+        .remove({ id })
+        .write()
+
+      return pet
     }
   }
 }

@@ -14,6 +14,10 @@ module.exports = {
     addPet(_, {input}, {models, user}) {
       const pet = models.Pet.create({...input, user: user.id})
       return pet
+    },
+    deletePet(_, {id}, {models}) {
+      const pet = models.Pet.delete(id)
+      return pet 
     }
   },
   Pet: {
