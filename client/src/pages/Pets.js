@@ -5,7 +5,7 @@ import PetsList from '../components/PetsList'
 import NewPetModal from '../components/NewPetModal'
 import Loader from '../components/Loader'
 
-const query = gql`
+const ALL_PETS = gql`
   query AllPets {
     pets {
       id
@@ -15,27 +15,40 @@ const query = gql`
     }
   }
 `
+const ADD_PET = gql`
+  mutation AddPet($newPet: NewPetInput!) {
+    addPet(input: $newPet) {
+      id
+      name
+      type
+      img
+    }
+  }
+`
+
 export default function Pets () {
   const [modal, setModal] = useState(false)
-  const { loading, error, data } = useQuery(query)
+  const { loading, error, data } = useQuery(ALL_PETS)
+  const [CreatePet, { error: nePetError, loading: newPetLoading } ] = useMutation(ADD_PET)
 
   const onSubmit = input => {
     setModal(false)
+    CreatePet({ variables: { newPet: input } })
   }
   
   if (modal) {
     return <NewPetModal onSubmit={onSubmit} onCancel={() => setModal(false)} />
   }
 
-  if (loading) {
+  if (loading || newPetLoading) {
     return (
       <Loader />
     )
   }
 
-  if (error) {
+  if (error || nePetError) {
     return (
-      <p>Error</p>
+      <p>Error!</p>
     )
   }
 
