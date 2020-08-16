@@ -7,6 +7,7 @@ const PetBox = ({pet}) => (
     </figure>
     <div className="pet-name">{pet.name}</div>
     <div className="pet-type">{pet.type}</div>
+    <div className="pet-vaccinated">{pet.vaccinated === true ? 'Yes' : 'No'}</div>
   </div>
 )
 

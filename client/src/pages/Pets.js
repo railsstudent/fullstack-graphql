@@ -5,25 +5,35 @@ import PetsList from '../components/PetsList'
 import NewPetModal from '../components/NewPetModal'
 import Loader from '../components/Loader'
 
+const PETS_FIELDS = gql`
+  fragment PetsFields on Pet {
+    id
+    name
+    type
+    img
+    vaccinated @client
+    owner {
+      id
+      age @client
+    }
+  }
+`
+
 const ALL_PETS = gql`
   query AllPets {
     pets {
-      id
-      name
-      type
-      img
+      ...PetsFields
     }
   }
+  ${PETS_FIELDS}
 `
 const ADD_PET = gql`
   mutation AddPet($newPet: NewPetInput!) {
     addPet(input: $newPet) {
-      id
-      name
-      type
-      img
+      ...PetsFields
     }
   }
+  ${PETS_FIELDS}
 `
 
 export default function Pets () {
@@ -50,6 +60,11 @@ export default function Pets () {
           name: input.name,
           type: input.type,
           img: 'https://via.placeholder.com/150',
+          vaccinated: false,
+          owner: {
+            id: `${Math.floor(Math.random() * 10000)}`,
+            age: 1
+          },
           __typename: 'Pet'
         } 
       }
