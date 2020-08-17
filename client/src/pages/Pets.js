@@ -36,6 +36,15 @@ const ADD_PET = gql`
   ${PETS_FIELDS}
 `
 
+const DELETE_PET = gql`
+  mutation DeletePet($id: ID!) {
+    deletePet(id: $id) {
+      ...PetsFields
+    }
+  }
+  ${PETS_FIELDS}
+`
+
 export default function Pets () {
   const [modal, setModal] = useState(false)
   const { loading, error, data } = useQuery(ALL_PETS)
@@ -45,6 +54,15 @@ export default function Pets () {
       cache.writeQuery({
         query: ALL_PETS,
         data: { pets: [addPet, ...pets] }
+      })
+    }
+  })
+  const [DeletePet, { error: deletePetError } ] = useMutation(DELETE_PET, {
+    update(cache, { data: { deletePet } }) {
+      const { pets } = cache.readQuery({ query: ALL_PETS });
+      cache.writeQuery({
+        query: ALL_PETS,
+        data: { pets: pets.filter(p => p.id !== deletePet.id )}
       })
     }
   })
@@ -70,6 +88,14 @@ export default function Pets () {
       }
     })
   }
+
+  const onDelete = (id) => {
+    DeletePet({
+      variables: {
+        id
+      }
+    })
+  }
   
   if (modal) {
     return <NewPetModal onSubmit={onSubmit} onCancel={() => setModal(false)} />
@@ -81,7 +107,7 @@ export default function Pets () {
     )
   }
 
-  if (error || nePetError) {
+  if (error || nePetError || deletePetError) {
     return (
       <p>Error!</p>
     )
@@ -105,7 +131,7 @@ export default function Pets () {
         </div>
       </section>
       <section>
-        <PetsList pets={data.pets} />
+        <PetsList pets={data.pets} onDelete={onDelete} />
       </section>
     </div>
   )
