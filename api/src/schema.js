@@ -30,6 +30,12 @@ input PetsInput {
   type: PetType
 }
 
+input UpdatePetInput {
+  id: ID!
+  name: String!
+  type: PetType!
+}
+
 type Query {
   user: User!
   pets(input: PetsInput): [Pet]!
@@ -39,6 +45,7 @@ type Query {
 type Mutation {
   addPet(input: NewPetInput!): Pet!
   deletePet(id: ID!): Pet!
+  updatePet(input: UpdatePetInput!): Pet!
 }
 `;
 

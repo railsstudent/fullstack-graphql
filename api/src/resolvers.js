@@ -18,7 +18,11 @@ module.exports = {
     deletePet(_, {id}, {models}) {
       const pet = models.Pet.delete(id)
       return pet 
-    }
+    },
+    updatePet(_, {input}, {models, user}) {
+      const pet = models.Pet.update({...input, user: user.id})
+      return pet
+    },
   },
   Pet: {
     owner(pet, _, {models}) {
